@@ -15,9 +15,9 @@ from layer import DenseLayer
 from optimizer import Optimizer
 from lossfunction import LossFunction
 from lossfunction import get_lossfunction
-sys.path.append(os.path.abspath('../diag'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../diag'))
 from networkhistory import NetworkHistory
-sys.path.append(os.path.abspath('../preprocessing'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../preprocessing'))
 import preprocessing as prpr
 
 class DenseNetwork():
@@ -30,7 +30,7 @@ class DenseNetwork():
         self.batch_size = None
         self.nepochs = None
         self.loss_function = None
-        self.metrics = []
+        self.metrics = {}
         self.history = NetworkHistory()
         
     def __str__(self):
@@ -85,9 +85,9 @@ class DenseNetwork():
             self.loss_function = loss_function
         else:
             raise Exception('Given loss function is not of type LossFunction or str.')
-        self.metrics.append(self.loss_function)
+        self.metrics[str(self.loss_function)] = self.loss_function
         
-    def add_metric(self, metric):
+    def add_metric(self, metricname, metric):
         ### add a metric that will be used for intermediate evaluation
         # input type is assumed to be str (metric identifier)
         # todo: consistently implement metrics and loss functions
@@ -215,17 +215,25 @@ class DenseNetwork():
             batchn = 1
             while startindex + 2*self.batch_size <= ntrain:
                 print('\r'+'epoch {}/{}: batch {}/{}'.format(epoch+1,self.nepochs,batchn,nbatches),end='')
-                intensors_batch = [ Tensor(thisarray) for thisarray in X_train[startindex:startindex+self.batch_size] ]
-                labels_batch = labels[startindex:startindex+self.batch_size]
-                self.fit_batch(intensors_batch,labels_batch)
-                if do_validation: self.history.add_entry_info( epoch=epoch+1, batch=batchn, metrics=self.evaluate_metrics(X_val, labels_val) )
+                endindex = startindex+self.batch_size
+                X_batch = X_train[startindex:endindex]
+                intensors_batch = [ Tensor(thisarray) for thisarray in X_batch ]
+                labels_batch = labels[startindex:endindex]
+                self.fit_batch(intensors_batch, labels_batch)
+                if do_validation:
+                    metrics = self.evaluate_metrics_trainval(X_batch, labels_batch, X_val, labels_val)
+                    self.history.add_entry_info( epoch=epoch+1, batch=batchn, metrics=metrics )
                 startindex += self.batch_size
                 batchn += 1
+            # one final batch
             print('\r'+'epoch {}/{}: batch {}/{}'.format(epoch+1,self.nepochs,batchn,nbatches))
-            X_train_batch = [ Tensor(thisarray) for thisarray in X_train[startindex:] ]
+            X_batch = X_train[startindex:]
+            intensors_batch = [ Tensor(thisarray) for thisarray in X_batch ]
             labels_batch = labels[startindex:]
-            self.fit_batch(X_train_batch,labels_batch)
-            if do_validation: self.history.add_entry_info( epoch=epoch+1, batch=batchn, metrics=self.evaluate_metrics(X_val, labels_val) )
+            self.fit_batch(intensors_batch, labels_batch)
+            if do_validation:
+                metrics = self.evaluate_metrics_trainval(X_batch, labels_batch, X_val, labels_val)
+                self.history.add_entry_info( epoch=epoch+1, batch=batchn, metrics=metrics )
         print('--- finished network training ---')
                     
     def predict(self, X_test):
@@ -254,9 +262,19 @@ class DenseNetwork():
         #       still to decide how to treat loss functions and metrics uniformly
         res = {}
         pred = self.predict(X_test)
-        for metric in self.metrics:
-            res[metric] = metric.f(labels,pred)
+        for metricname, metric in self.metrics.items():
+            res[metricname] = metric.f(labels, pred)
         return res
+
+    def evaluate_metrics_trainval(self, X_train, y_train, X_val, y_val):
+        ### helper function for keeping track of metrics during training
+        train_metrics = self.evaluate_metrics(X_train, y_train)
+        for metricname in list(train_metrics.keys()):
+            train_metrics[metricname+' (training)'] = train_metrics.pop(metricname)
+        val_metrics = self.evaluate_metrics(X_val, y_val)
+        for metricname in list(val_metrics.keys()):
+            val_metrics[metricname+' (validation)'] = val_metrics.pop(metricname)
+        return {**train_metrics, **val_metrics}
     
     def plot_weights(self):
         ### plot all weight matrices for this network

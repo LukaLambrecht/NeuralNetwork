@@ -7,7 +7,7 @@
 import sys
 import os
 import numpy as np
-sys.path.append(os.path.abspath('../src'))
+sys.path.append(os.path.abspath('../../src'))
 from tensor import Tensor
 
 

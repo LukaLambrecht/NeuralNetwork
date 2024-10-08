@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # import local modules
-sys.path.append(os.path.abspath('../src'))
+sys.path.append(os.path.abspath('../../src'))
 from tensor import Tensor
 from optimizer import SGD
 from optimizer import RMSprop

@@ -8,7 +8,7 @@ import sys
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-sys.path.append(os.path.abspath('../src'))
+sys.path.append(os.path.abspath('../../src'))
 from activation import get_activation
 from tensor import Tensor
 
@@ -30,5 +30,4 @@ for activation in all_activations:
     ax.plot(xax, dfval, color='r', label='df')
     ax.legend()
     ax.set_title(activation)
-    fig.show()
-    fig.savefig(activation+'.png')
+plt.show()

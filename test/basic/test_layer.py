@@ -8,9 +8,10 @@
 import sys
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 # import local modules
-sys.path.append(os.path.abspath('../src'))
+sys.path.append(os.path.abspath('../../src'))
 from tensor import Tensor
 from layer import DenseLayer
 
@@ -44,3 +45,4 @@ print('dfweights: '+str(dfweights))
 D = DenseLayer(10,10,'relu')
 print(D)
 D.plot_weights()
+plt.show()

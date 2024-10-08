@@ -8,7 +8,7 @@ import sys
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-sys.path.append(os.path.abspath('../src'))
+sys.path.append(os.path.abspath('../../src'))
 from lossfunction import get_lossfunction
 
 L = get_lossfunction('mse')
@@ -29,5 +29,4 @@ for lf in all_lossfunctions:
     ax.plot(xax, dlval, color='r', label='df')
     ax.legend()
     ax.set_title(lf)
-    fig.show()
-    fig.savefig(lf+'.png')
+plt.show()

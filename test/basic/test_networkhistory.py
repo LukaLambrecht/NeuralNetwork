@@ -8,7 +8,7 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-sys.path.append(os.path.abspath('../diag'))
+sys.path.append(os.path.abspath('../../diag'))
 from networkhistory import NetworkHistoryEntry
 from networkhistory import NetworkHistory
 

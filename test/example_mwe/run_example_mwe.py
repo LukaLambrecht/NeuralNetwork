@@ -11,15 +11,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # network imports
-sys.path.append(os.path.abspath('../src'))
-sys.path.append(os.path.abspath('../diag'))
+sys.path.append(os.path.abspath('../../src'))
+sys.path.append(os.path.abspath('../../diag'))
 from layer import DenseLayer
 from network import DenseNetwork
 from optimizer import SGD, RMSprop, Adam
 from metrics import ROC
 
 # data imports
-sys.path.append(os.path.abspath('../datagen'))
+sys.path.append(os.path.abspath('../../datagen'))
 import generate_data as gen
 
 
@@ -34,8 +34,10 @@ import generate_data as gen
 centers = np.array([[0,0],[2,2]])
 covs = np.array([[1,1],[1,1]])
 categories = np.array([0,1])
-clusters = gen.generate_multi_gauss(centers,covs,categories,1000)
-gen.plot_clusters( clusters )
+clusters = gen.generate_multi_gauss(centers, covs, categories,1000)
+fig,ax = gen.plot_clusters( clusters )
+ax.set_xlabel('Dummy data dimension 1', fontsize=13)
+ax.set_ylabel('Dummy data dimension 2', fontsize=13)
 np.random.shuffle(clusters)
 labels = clusters[:,0]
 X_train = clusters[:,1:]
@@ -51,7 +53,7 @@ N.set_loss_function('binary_crossentropy')
 #N.set_optimizer( RMSprop(learning_rate=0.1) )
 N.set_optimizer( Adam(learning_rate=0.05) )
 N.set_batch_size(100)
-N.set_nepochs(3)
+N.set_nepochs(5)
 	
 # train the network
 N.fit(X_train, labels, validation_fraction=0.1)
