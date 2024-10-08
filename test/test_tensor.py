@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-###################################
-# testing code for file Tensor.py #
-###################################
+#################################
+# testing code for Tensor class #
+#################################
 
 import sys
 import os
 import numpy as np
 sys.path.append(os.path.abspath('../src'))
-from Tensor import Tensor
+from tensor import Tensor
 
 
 A = Tensor(np.array([[1,2],[3,4]]))

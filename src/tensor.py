@@ -177,7 +177,7 @@ class Tensor:
       self.array = np.diag(np.squeeze(self.array,axis=1))
       self.shape = self.array.shape
 	
-  def contains_values_above(self,threshold):
+  def contains_values_above( self, threshold ):
     ### return whether a tensor contains values (absolute value) above threshold
     arr = np.abs(self.array)
     return np.any(arr>threshold)
@@ -186,6 +186,11 @@ class Tensor:
     ### element-wise square
     if not inplace: return Tensor( np.square(self.array) )
     else: self.array = np.square(self.array)
+
+  def sqrt( self, inplace=False ):
+    ### element-wise square root
+    if not inplace: return Tensor( np.sqrt(self.array) )
+    else: self.array = np.sqrt(self.array)
 	
   def divide( self, other ):
     ### element-wise division
@@ -197,3 +202,6 @@ class Tensor:
     ### divide the elements of the current tensor by another one
     # note: the original tensor is modified in-place.
     self.array = np.divide(self.array,other.array)
+
+  def clip( self, min_value, max_value ):
+      return Tensor( np.clip(self.array, min_value, max_value) )

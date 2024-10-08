@@ -4,21 +4,24 @@
 # test the Network class on generated data #
 ############################################
 
-# general imports
-import numpy as np
-import sys
+# import externa modules
 import os
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
+
 # network imports
 sys.path.append(os.path.abspath('../src'))
 sys.path.append(os.path.abspath('../diag'))
-from Layer import DenseLayer
-from Network import DenseNetwork
-from Optimizer import SGD,Adam
-from Metrics import ROC
-#from Tensor import Tensor
+from layer import DenseLayer
+from network import DenseNetwork
+from optimizer import SGD,Adam
+from metrics import ROC
+
 # data imports
 sys.path.append(os.path.abspath('../datagen'))
 import generate_data as gen
+
 
 ### STATUS ###
 # seems to work well with following settings:
@@ -43,14 +46,15 @@ print('shape of labels: '+str(labels.shape))
 N = DenseNetwork()
 N.add_layer( DenseLayer(2,2,'linear') )
 N.add_layer( DenseLayer(2,1,'sigmoid') )
-N.set_loss_function('mse')
-N.set_optimizer( SGD(learning_rate=0.05, momentum=0., nesterov=False) )
+#N.set_loss_function('mse')
+N.set_loss_function('binary_crossentropy')
+N.set_optimizer( SGD(learning_rate=0.05, momentum=0.3) )
 #N.set_optimizer( Adam(learning_rate=0.01) )
 N.set_batch_size(100)
-N.set_nepochs(3)
+N.set_nepochs(10)
 	
 # train the network
-N.fit(X_train,labels,validation_fraction=0.1)
+N.fit(X_train, labels, validation_fraction=0.1)
 predictions = N.predict(X_train)
 
 # plot network history
@@ -63,8 +67,9 @@ N.plot_weights()
 nprint = 10
 randint = np.random.choice(np.arange(len(labels)),size=nprint)
 for i in randint:
-	print('label: {} --> prediction: {}'.format(labels[i],predictions[i]))
+    print('label: {} --> prediction: {}'.format(labels[i],predictions[i]))
 	
 # make a roc curve
-roc = ROC(labels,predictions)
+roc = ROC(labels, predictions)
 roc.plot(logx=True)
+plt.show()

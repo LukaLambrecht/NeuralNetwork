@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-##########################################
-# testing code for file generate_data.py #
-##########################################
+####################################
+# testing code for data generation #
+####################################
 
 import sys
 import os

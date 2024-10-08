@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 
-######################################
-# testing code for the file Layer.py #
-######################################
+################################
+# testing code for Layer class #
+################################
 
+# import external modules
 import sys
 import os
 import numpy as np
-sys.path.append(os.path.abspath('../src'))
-from Tensor import Tensor
-from Layer import DenseLayer
 
-D = DenseLayer(1,1,'linear',biasterm=False)
+# import local modules
+sys.path.append(os.path.abspath('../src'))
+from tensor import Tensor
+from layer import DenseLayer
+
+D = DenseLayer(1, 1, 'linear', biasterm=False)
 weights = Tensor(np.array([[2]]))
 D.set_weights(weights)
 
