@@ -74,6 +74,7 @@ class BinaryCrossEntropy(LossFunction):
         
     def f(self, labels, predictions, domean=True):
         super(BinaryCrossEntropy,self).f(labels, predictions)
+        predictions = np.clip(predictions, 1e-5, 1-1e-5)
         term1 = np.multiply(labels, np.log(predictions))
         term2 = np.multiply(1-labels, np.log(1-predictions))
         res = -(term1 + term2)
@@ -82,6 +83,7 @@ class BinaryCrossEntropy(LossFunction):
     
     def df(self, labels, predictions, domean=True):
         super(BinaryCrossEntropy,self).df(labels, predictions)
+        predictions = np.clip(predictions, 1e-5, 1-1e-5)
         term1 = np.divide(labels, predictions)
         term2 = np.divide(1-labels, 1-predictions)
         res = -(term1 - term2)
